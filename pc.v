@@ -15,7 +15,7 @@ output reg [31: 0] current_pc;
         else begin
            if(pc_signal)
             current_pc <= next_pc;
-
+            
         end
     end
 endmodule

@@ -47,7 +47,7 @@ module CPU(input reset,       // positive reset signal
 
   // end
 
-  assign pc_signal = (pc_write_cond & alu_bcond_temp) | pc_write;
+  assign pc_signal = pc_write | (pc_write_cond & alu_bcond_temp);
 
   //Register File
   wire [4:0] rs1;          
@@ -109,23 +109,24 @@ module CPU(input reset,       // positive reset signal
   always @(posedge clk) begin
     if(ir_write == 1) 
     IR <= dout;
-   
-    MDR <= dout;
+    
 
+    MDR <= dout;
     ALUOut <= alu_result;
-   
     A <= rs1_dout;
     B <= rs2_dout;
     // $display("mdr is %x", MDR);
-    // $display("ALUOut is %x", ALUOut);
-    //  $display("A : %x, B : %x", A, B);
+     $display("ALUOut is %x", ALUOut);
+     $display("A : %x, B : %x", A, B);
   end
+
+ 
 
   // always @(*) begin
   //    A <= rs1_dout;
   //    B <= rs2_dout;
   // end
-
+  
   //immediate generator
   wire [31:0] imm_gen_out;
 
@@ -140,7 +141,21 @@ module CPU(input reset,       // positive reset signal
   mux_4_to_1 alu_in2(B, 3'b100, imm_gen_out, ALUsrc_B, alu_in_2);
 
   mux_2_to_1 alu_pc(alu_result, ALUOut, pc_source, next_pc);
+  
+  always @(*) begin
+
+    $display("next_pc : %x, alu_result: %x, cur_state: %x", next_pc, alu_result, cur_state);
+    
+  end
  
+ always @(*) begin
+   $display("pc_signal : %b, ", pc_signal);
+   $display("pc_write : %b, ", pc_write);
+ end
+
+  always @(*) begin
+   $display("IR : %x, ", IR);
+ end
 
 
 
@@ -156,7 +171,7 @@ module CPU(input reset,       // positive reset signal
 
   // integer i;
   // always @(*) begin
-  //   if(current_pc >= 8'h8c) begin
+  //   if(current_pc >= 8'h7c) begin
   //     for (i = 0; i < 32; i = i + 1)
   //       $display("%d %x\n", i, reg_file.rf[i]);
   //       $finish();
@@ -164,9 +179,9 @@ module CPU(input reset,       // positive reset signal
   // end
 
 
-  // always @(current_pc) begin
-  //   $display("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ %x", current_pc);
-  // end
+  always @(current_pc) begin
+    $display("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ %x", current_pc);
+  end
 
   // ---------- Update program counter ----------
   // PC must be updated on the rising edge (positive edge) of the clock.

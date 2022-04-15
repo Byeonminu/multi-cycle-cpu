@@ -15,10 +15,10 @@ module RegisterFile(input	reset,
   assign rs1_dout = rf[rs1];
   assign rs2_dout = rf[rs2];
 
-  // always @(*) begin
+  always @(*) begin
 
-  //   $display("rs1: %d, rs2 : %d, rd: %d, rs1_dout : %x, rs2_dout : %x",rs1, rs2, rd, rs1_dout, rs2_dout);
-  // end
+    $display("rs1: %d, rs2 : %d, rd: %d, rs1_dout : %x, rs2_dout : %x",rs1, rs2, rd, rs1_dout, rs2_dout);
+  end
 
 
 
@@ -34,7 +34,7 @@ module RegisterFile(input	reset,
     else begin
       if (write_enable && rd != 0) begin
         rf[rd] <= rd_din;
-      //$display("register write (주소)%d <= %x", rd, rd_din);
+      $display("register write (주소)%d <= %x", rd, rd_din);
       end
     end
   end
