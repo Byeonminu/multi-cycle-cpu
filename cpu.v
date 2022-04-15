@@ -36,18 +36,14 @@ module CPU(input reset,       // positive reset signal
   wire [31:0] current_pc;
   wire pc_signal;
 
-  wire alu_bcond_temp;
-  assign alu_bcond_temp = (IR[14:12] == 3'b000 & alu_bcond[0] == 1) ? 1: 
-  (IR[14:12] == 3'b001 & alu_bcond[0] == 0) ? 1 :
-  (IR[14:12] == 3'b100 & alu_bcond[1] == 1) ? 1 : 
-  (IR[14:12] == 3'b101 & (alu_bcond[0] == 1 | alu_bcond[2] == 1 )) ? 1 : 1'b0;
+  
 
   // always @(*) begin
   //   $display("alu_bcond_temp : %b, pc_signal: %b",alu_bcond_temp, pc_signal);
 
   // end
 
-  assign pc_signal = pc_write | (pc_write_cond & alu_bcond_temp);
+ 
 
   //Register File
   wire [4:0] rs1;          
@@ -65,7 +61,7 @@ module CPU(input reset,       // positive reset signal
   //   $display("rd is %d in cpu", rd);
   // end
 
-  mux_2_to_1 memdata_rf(ALUOut, MDR, mem_to_reg, rd_din);
+ 
 
  
   //Control unit
@@ -85,6 +81,10 @@ module CPU(input reset,       // positive reset signal
   reg [2:0] cur_state;
   wire [2:0] next_state;
 
+   mux_2_to_1 memdata_rf(ALUOut, MDR, mem_to_reg, rd_din);
+
+  wire alu_bcond_temp;
+  
 
   always @(posedge clk) begin
     if(reset)
@@ -104,21 +104,9 @@ module CPU(input reset,       // positive reset signal
   assign din = B;
 
   mux_2_to_1 pc_mem(current_pc, ALUOut, lorD, addr);
+  
 
-
-  always @(posedge clk) begin
-    if(ir_write == 1) 
-    IR <= dout;
-    
-
-    MDR <= dout;
-    ALUOut <= alu_result;
-    A <= rs1_dout;
-    B <= rs2_dout;
-    // $display("mdr is %x", MDR);
-     $display("ALUOut is %x", ALUOut);
-     $display("A : %x, B : %x", A, B);
-  end
+ 
 
  
 
@@ -142,24 +130,41 @@ module CPU(input reset,       // positive reset signal
 
   mux_2_to_1 alu_pc(alu_result, ALUOut, pc_source, next_pc);
   
-  always @(*) begin
-
-    $display("next_pc : %x, alu_result: %x, cur_state: %x", next_pc, alu_result, cur_state);
+  always @(posedge clk) begin
+    if(ir_write == 1) 
+    IR <= dout;
     
+
+    MDR <= dout;
+    ALUOut <= alu_result;
+    A <= rs1_dout;
+    B <= rs2_dout;
+    // $display("mdr is %x", MDR);
+    //  $display("ALUOut is %x", ALUOut);
+    //  $display("A : %x, B : %x", A, B);
   end
+
+//   always @(*) begin
+
+//     $display("next_pc : %x, alu_result: %x, cur_state: %x", next_pc, alu_result, cur_state);
+    
+//   end
  
- always @(*) begin
-   $display("pc_signal : %b, ", pc_signal);
-   $display("pc_write : %b, ", pc_write);
- end
+//  always @(*) begin
+//    $display("pc_signal : %b, ", pc_signal);
+//    $display("pc_write : %b, ", pc_write);
+//  end
 
-  always @(*) begin
-   $display("IR : %x, ", IR);
- end
-
-
+//   always @(*) begin
+//    $display("IR : %x, ", IR);
+//  end
 
 
+  assign alu_bcond_temp = (IR[14:12] == 3'b000 & alu_bcond[0] == 1) ? 1: 
+  (IR[14:12] == 3'b001 & alu_bcond[0] == 0) ? 1 :
+  (IR[14:12] == 3'b100 & alu_bcond[1] == 1) ? 1 : 
+  (IR[14:12] == 3'b101 & (alu_bcond[0] == 1 | alu_bcond[2] == 1 )) ? 1 : 1'b0;
+  assign pc_signal = pc_write | (pc_write_cond & alu_bcond_temp);
   assign is_halted = (reg_file.rf[17] == 10 & IR[6:0] == `ECALL) ? 1 : 0;
  
   // always @(reg_file.rf[17]) begin
@@ -179,9 +184,9 @@ module CPU(input reset,       // positive reset signal
   // end
 
 
-  always @(current_pc) begin
-    $display("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ %x", current_pc);
-  end
+  // always @(current_pc) begin
+  //   $display("ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ %x", current_pc);
+  // end
 
   // ---------- Update program counter ----------
   // PC must be updated on the rising edge (positive edge) of the clock.

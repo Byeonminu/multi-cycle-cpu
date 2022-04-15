@@ -11,9 +11,9 @@ module ALU (input [31:0] alu_in_1,
 	assign alu_bcond[1] = (alu_result < 0) ? 1 : 0; // blt
 	assign alu_bcond[2] = (alu_result > 0) ? 1 : 0; // bge
 
-always @(*) begin
-	$display("alu input first %x , second %x", alu_in_1, alu_in_2);
-end
+// always @(*) begin
+// 	$display("alu input first %x , second %x", alu_in_1, alu_in_2);
+// end
 
 always@(*) begin
 	
@@ -28,7 +28,7 @@ always@(*) begin
 	4'b1000: alu_result = alu_in_1 >> alu_in_2; // srl
 	default: alu_result = {32{1'bx}};	
 	endcase
-	  $display("alu_result %x", alu_result );
+	 // $display("alu_result %x", alu_result );
 	
 /* `define FUNCT3_ADD      3'b000
 `define FUNCT3_SUB      3'b000

@@ -69,11 +69,11 @@ end
 
 always @(cur_state or opcode) begin
     if(cur_state == `IF) begin  // IF
-        $display("IFIFIFIFIFIFIFIFIFIFIFIFIFIFIFIFIF");
+        //$display("IFIFIFIFIFIFIFIFIFIFIFIFIFIFIFIFIF");
         ir_write =      1;
-        $display("IF 안에서 opcode = %x", opcode);
+        //$display("IF 안에서 opcode = %x", opcode);
         if(opcode == `ADD || opcode == `ADDI || opcode == `LW || opcode == `SW || opcode == `JAL || opcode == `JALR || opcode == `ECALL || opcode == `BEQ) begin
-        $display("IF 안에 if문에 들어온지 확인하기!");
+        //$display("IF 안에 if문에 들어온지 확인하기!");
         
         lorD =          0;
         mem_read =      1;
@@ -94,20 +94,20 @@ always @(cur_state or opcode) begin
        
     end
     else if(cur_state == `ID) begin
-        $display("IDIDIDIDIDIDIDIDIDIDIDIDIDIDIDID");
+        //$display("IDIDIDIDIDIDIDIDIDIDIDIDIDIDIDID");
         
         aluop =     2'b00;
         ir_write =      0;
         if(opcode == `ADD || opcode == `ADDI || opcode == `LW || opcode == `SW || opcode == `JALR) begin
         
-         $display("beq의 id단계가 아닙니다!!!");
+       
         ALUsrc_A =      0;
         ALUsrc_B =  2'b01;
         pc_write =      0;
       
         end
         else if (opcode == `BEQ) begin
-            $display("beq의 id단계 입니다.");
+           
             ir_write = 0;
             mem_read = 0;
             pc_write = 1;
@@ -125,7 +125,7 @@ always @(cur_state or opcode) begin
         end
     end
     else if(cur_state == `EX) begin // EX
-        $display("EXEXEXEXEXEXEXEXEXEXEXEXEXEXEXEXEXEXEXEX");
+        //$display("EXEXEXEXEXEXEXEXEXEXEXEXEXEXEXEXEXEXEXEX");
         case (opcode) 
         7'b0110011 : aluop = 2'b10; // R-type
         7'b0000011 : aluop = 2'b00; // lw-type
@@ -177,7 +177,7 @@ always @(cur_state or opcode) begin
         
     end
     else if(cur_state == `MEM) begin //MEM
-      $display("MEMMEMMEMMEMMEMMEMMEMMEMMEMMEMMEMMEMMEMMEMMEM");
+      //$display("MEMMEMMEMMEMMEMMEMMEMMEMMEMMEMMEMMEMMEMMEMMEM");
         if(opcode == `LW) begin // LW type
         
         mem_read =      1;
@@ -199,7 +199,7 @@ always @(cur_state or opcode) begin
         end
     end 
     else if(cur_state == `WB) begin
-        $display("WBWBWBWBWBWBWBWBWBWBWBWBWBWBWB");
+        //$display("WBWBWBWBWBWBWBWBWBWBWBWBWBWBWB");
         case (opcode) 
         7'b1100011 : aluop = 2'b01; // sb-type
         default : aluop = 2'b00;
